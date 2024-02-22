@@ -5,11 +5,12 @@ import java.sql.SQLException;
 
 public class UserRegistrationService {
 
-    public boolean registerUser(String username, String password, Connection conn) {
+    public boolean registerUser(String username, String password) throws SQLException {
+        Connection conn = DatabaseUtil.getConnection();
         String sql = "INSERT INTO users (username, password) VALUES (?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, username);
-            pstmt.setString(2, password); // В реальном приложении пароль должен быть зашифрован
+            pstmt.setString(2, password);
             int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -18,8 +19,9 @@ public class UserRegistrationService {
         }
     }
 
-    public boolean loginUser(String username, String password, Connection conn) {
-        String sql = "SELECT * FROM users WHERE username = ? AND password = ?"; // Предполагается, что пароли хранятся в открытом виде для этого примера
+    public boolean loginUser(String username, String password) throws SQLException {
+        Connection conn = DatabaseUtil.getConnection();
+        String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, username);
             pstmt.setString(2, password);
